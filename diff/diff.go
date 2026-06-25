@@ -10,9 +10,9 @@ import (
 type ChangeType string
 
 const (
-	Added    ChangeType = "added"
-	Removed  ChangeType = "removed"
-	Modified ChangeType = "modified"
+	Added     ChangeType = "added"
+	Removed   ChangeType = "removed"
+	Modified  ChangeType = "modified"
 	Unchanged ChangeType = "unchanged"
 )
 
@@ -38,6 +38,23 @@ func (r *Result) HasChanges() bool {
 		}
 	}
 	return false
+}
+
+// Summary returns a brief human-readable summary of the diff result,
+// listing the count of added, removed, and modified keys.
+func (r *Result) Summary() string {
+	var added, removed, modified int
+	for _, c := range r.Changes {
+		switch c.Type {
+		case Added:
+			added++
+		case Removed:
+			removed++
+		case Modified:
+			modified++
+		}
+	}
+	return fmt.Sprintf("%s: +%d -%d ~%d", r.Path, added, removed, modified)
 }
 
 // Compare diffs two secret data maps (string->string) and returns a Result.
